@@ -34,7 +34,12 @@ while has_more:
             ignored += 1
         else:
             print(f"included message from {message['user']}")
-            history.append(message["text"])
+            history.append(
+                {
+                    "text": message["text"],
+                    "url": f"https://metagov.slack.com/archives/{channel_id}/p{message['ts'].replace('.', '')}"
+                }
+            )
             counter += 1
     
     total += len(messages)
