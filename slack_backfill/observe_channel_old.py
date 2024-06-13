@@ -15,26 +15,10 @@ total = 0
 channel_id = "C06DMGNV7E0"
 # channel_id = input("Enter a channel id: ")
 
-CREATE = "POST"
-READ = "GET"
-UPDATE = "PUT"
-DELETE = "DELETE"
 
-OBJECT = "object"
-SET = "set"
-LINK = "link"
+channel_rid = "slack_channel:TMQ3PKXT9/" + channel_id
 
-base_url="http://127.0.0.1:8000/"
-def call_koi(method, type, **params):
-    response = requests.request(method, base_url+type, json=params)
-    return response.json()
-
-channel_rid = "slack+channel:metagov/" + channel_id
-
-user_table = {}
-
-call_koi(CREATE, OBJECT, rid=channel_rid)
-channel_link = call_koi(CREATE, LINK, sources=[channel_rid])["rid"]
+print(channel_rid)
 
 channel_info = app.client.conversations_info(channel=channel_id)
 channel_description = channel_info.data['channel']['purpose']['value']
@@ -53,27 +37,17 @@ while has_more:
 
     for message in messages:
         if message['user'] in opted_out_users:
-            print(f"ommitted message from {message['user']}, as they have opted out of data export")
             ignored += 1
         else:
-            print(f"included message from {message['user']}")
 
             message_id = "p" + message['ts'].replace('.', '')
 
-            user_rid = f"slack+user:metagov/{message['user']}"
+            user_rid = f"slack_user:TMQ3PKXT9/{message['user']}"
+            print(user_rid)
 
-            if user_rid not in user_table.keys():
-                call_koi(CREATE, OBJECT, rid=user_rid)
-                user_link = call_koi(CREATE, LINK, sources=[user_rid])["rid"]
-                user_table[user_rid] = user_link
+            message_rid = f"slack_message:TMQ3PKXT9/{channel_id}/{message_id}"
+            print(message_rid)
 
-            message_rid = f"slack+message:metagov/{channel_id}/{message_id}"
-            call_koi(CREATE, OBJECT, rid=message_rid, data={
-                "text": message["text"]
-            })
-            call_koi(UPDATE, LINK, rid=channel_link, add_targets=[message_rid])
-            call_koi(UPDATE, LINK, rid=user_table[user_rid], add_targets=[message_rid])
-            
             history.append(
                 {
                     "text": message["text"],
@@ -81,8 +55,6 @@ while has_more:
                 }
             )
 
-            rid = "slack_message:metagov/{channel_id}/{message_id}"
-            print(rid)
             counter += 1
     
     total += len(messages)

@@ -1,0 +1,49 @@
+{
+  "id": "C0175M3GLSU",
+  "name": "govbase-labs",
+  "is_channel": true,
+  "is_group": false,
+  "is_im": false,
+  "is_mpim": false,
+  "is_private": false,
+  "created": 1593709728,
+  "is_archived": false,
+  "is_general": false,
+  "unlinked": 0,
+  "name_normalized": "govbase-labs",
+  "is_shared": false,
+  "is_org_shared": false,
+  "is_pending_ext_shared": false,
+  "pending_shared": [],
+  "context_team_id": "TMQ3PKXT9",
+  "updated": 1700244935784,
+  "parent_conversation": null,
+  "creator": "UMN7U5C8M",
+  "is_ext_shared": false,
+  "shared_team_ids": [
+    "TMQ3PKXT9"
+  ],
+  "pending_connected_team_ids": [],
+  "is_member": true,
+  "last_read": "1707902667.208389",
+  "topic": {
+    "value": "Weekly workshop for active Metagov projects,  especially those that involve production of any qualitative or quantitative data sets.\n\n<https://metagov.org/govbase/>",
+    "creator": "U02TV7DPGBG",
+    "last_set": 1670877614
+  },
+  "purpose": {
+    "value": "Discuss and work on Govbase, a catalog of governance tools for online communities.",
+    "creator": "U02TV7DPGBG",
+    "last_set": 1647133862
+  },
+  "properties": {
+    "canvas": {
+      "file_id": "F066NTLGRR7",
+      "is_empty": true,
+      "quip_thread_id": "Uae9AAMZFKA"
+    }
+  },
+  "previous_names": [
+    "govbase"
+  ]
+}
