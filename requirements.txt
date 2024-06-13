@@ -1,3 +1,4 @@
 slack_bolt
 pycryptodome
 python-dotenv
+requests

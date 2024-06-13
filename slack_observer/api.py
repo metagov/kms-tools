@@ -17,11 +17,14 @@ def conversation(message):
 def observe_message(message):
     user_id = message["user"]
     message_id = message["ts"]
+    thread_id = message.get("thread_ts")
     text = message["text"]
     team_id = message["team"]
     channel_id = message["channel"]
 
     message_rid = f"slack.message:{team_id}/{channel_id}/{message_id}"
+    if thread_id:
+        message_rid += f"/{thread_id}"
     channel_rid = f"slack.channel:{team_id}/{channel_id}"
     team_rid = f"slack.workspace:{team_id}"
     user_rid = f"slack.user:{team_id}/{user_id}"

@@ -40,6 +40,16 @@ def receive_message(message, say, client):
             name="brain"
         )
         response = api.conversation(message)
+        client.reactions_remove(
+            channel=channel_id,
+            timestamp=message_id,
+            name="brain"
+        )
+        client.reactions_add(
+            channel=channel_id,
+            timestamp=message_id,
+            name="bulb"
+        )
         say(
             text=response,
             thread_ts=message_id
