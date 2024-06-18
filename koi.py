@@ -3,6 +3,7 @@ import requests
 BASE_URL = "http://127.0.0.1:8000/"
 
 OBJECT = "object"
+OBJECT_LINK = "object/link"
 SET = "set"
 LINK = "link"
 LLM = "llm"
