@@ -20,9 +20,11 @@ while True:
 
 post_rids=[]
 make_request(CREATE, OBJECT, rid=publication_rid)
+print(publication_rid)
 for p in posts:
     post_rid = f"substack.post:{publication_subdomain}/{p['slug']}"
-    make_request(CREATE, OBJECT, rid=post_rid)
+    print(post_rid)
+    make_request(CREATE, OBJECT, rid=post_rid, overwrite=True)
     post_rids.append(post_rid)
-
+print(f"linking {publication_rid} -> {post_rids}")
 make_request(CREATE, OBJECT_LINK, rid=publication_rid, tag="has_posts", members=post_rids)

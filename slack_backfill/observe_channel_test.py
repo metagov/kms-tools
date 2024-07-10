@@ -79,7 +79,7 @@ for channel in channels:
         if message.get("thread_ts"):
             message_rid += f"/{message['thread_ts']}"
         message_rids.append(message_rid)
-        make_request(CREATE, OBJECT, rid=message_rid, data=message_data, overwrite=True, create_embedding=False)
+        make_request(CREATE, OBJECT, rid=message_rid, data=message_data)
     make_request(CREATE, OBJECT_LINK, rid=channel_rid, tag="has_messages", members=message_rids)
 
 make_request(CREATE, OBJECT_LINK, rid=workspace_rid, tag="has_channels", members=channel_rids)
