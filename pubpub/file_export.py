@@ -62,24 +62,24 @@ for pub in pubs_data:
     print("\t", pub["title"], pub_slug, pub_id, history_key)
 
 exported = []
-# for p in pubs:
-#     pub_title, pub_slug, pub_id, pub_history_key = p
+for p in pubs:
+    pub_title, pub_slug, pub_id, pub_history_key = p
 
-#     export_data = make_request("POST", "export", json={
-#         "format": "plain",
-#         "historyKey": pub_history_key,
-#         "pubId": pub_id,
-#         "communityId": "9d6cdebb-2f14-43d8-b6b1-d3208febc7b9"
-#     }).json()
+    export_data = make_request("POST", "export", json={
+        "format": "plain",
+        "historyKey": pub_history_key,
+        "pubId": pub_id,
+        "communityId": "9d6cdebb-2f14-43d8-b6b1-d3208febc7b9"
+    }).json()
 
-#     if "url" in export_data:
-#         exported.append(export_data["url"])
-#     else:
-#         task_id = export_data["taskId"]
-#     print(export_data)
+    if "url" in export_data:
+        exported.append(export_data["url"])
+    else:
+        task_id = export_data["taskId"]
+    print(export_data)
 
 pub_set2 = {(x[0], x[1], x[2]) for x in pubs}
-
+# breakpoint()
 # export = r1.json()
 
 # if "url" in export:

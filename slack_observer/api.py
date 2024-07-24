@@ -23,6 +23,7 @@ def observe_message(message):
     channel_id = message["channel"]
 
     message_rid = f"slack.message:{team_id}/{channel_id}/{message_id}"
+    print(f"observing {message_rid}")
     if thread_id:
         message_rid += f"/{thread_id}"
     channel_rid = f"slack.channel:{team_id}/{channel_id}"
@@ -40,27 +41,26 @@ def observe_message(message):
     make_request(CREATE, OBJECT, rid=team_rid)
     make_request(CREATE, OBJECT, rid=user_rid)
 
-    try:
-        channel_set = make_request(READ, OBJECT + "/link", rid=channel_rid, tag="has_messages")["target_rid"]
-        make_request(UPDATE, SET, rid=channel_set, add_members=[message_rid])
+    make_request(
+        CREATE, 
+        OBJECT_LINK, 
+        rid=channel_rid, 
+        tag="has_messages", 
+        members=[message_rid]
+    )
 
-    except HTTPError:
-        channel_set = make_request(CREATE, SET, members=[message_rid])["rid"]
-        make_request(CREATE, LINK, source=channel_rid, target=channel_set, tag="has_messages")
+    make_request(
+        CREATE,
+        OBJECT_LINK,
+        rid=team_rid,
+        tag="has_channels",
+        members=[channel_rid]
+    )
 
-    try:
-        workspace_set = make_request(READ, OBJECT + "/link", rid=team_rid, tag="has_channels")["target_rid"]
-        make_request(UPDATE, SET, rid=workspace_set, add_members=[channel_rid])
-    except HTTPError:
-        workspace_set = make_request(CREATE, SET, members=[channel_rid])["rid"]
-        make_request(CREATE, LINK, source=team_rid, target=workspace_set, tag="has_channels")
-
-    try:
-        user_set = make_request(READ, OBJECT + "/link", rid=user_rid, tag="wrote_messages")["target_rid"]
-        make_request(UPDATE, SET, rid=user_set, add_members=[message_rid])
-    except HTTPError:
-        user_set = make_request(CREATE, SET, members=[message_rid])["rid"]
-        make_request(CREATE, LINK, source=user_rid, target=user_set, tag="wrote_messages")
-
-
-    print(text)
+    make_request(
+        CREATE,
+        OBJECT_LINK,
+        rid=user_rid,
+        tag="wrote_messages",
+        members=[message_rid]
+    )

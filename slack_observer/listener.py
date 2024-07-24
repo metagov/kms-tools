@@ -1,13 +1,10 @@
 from config import SLACK_APP_TOKEN, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
+from slack_sdk.web import WebClient
 import json
 from . import api
 
-# logging.basicConfig(level=logging.DEBUG)
-
-with open("slack_backfill/opted_out_users.json", "r") as f:
-    opted_out_users = json.load(f)
 
 app = App(
     token=SLACK_BOT_TOKEN,
@@ -16,11 +13,38 @@ app = App(
 )
 
 allowed_channels = ["C077AFMMFGX", "C06LAQNLVNK"]
+data_consent_field_id = "Xf0650JBMA1Y"
+
+@app.event("app_mention")
+def handle_app_mention(event, say, client):
+    message_id = event["ts"]
+    channel_id = event["channel"]
+
+    client.reactions_add(
+        channel=channel_id,
+        timestamp=message_id,
+        name="brain"
+    )
+    response = api.conversation(event)
+    client.reactions_remove(
+        channel=channel_id,
+        timestamp=message_id,
+        name="brain"
+    )
+    client.reactions_add(
+        channel=channel_id,
+        timestamp=message_id,
+        name="bulb"
+    )
+    say(
+        text=response,
+        thread_ts=message_id
+    )
 
 @app.event("message")
-def receive_message(message, say, client):
+def receive_message(message, client: WebClient):
     if "subtype" in message:
-        print("ignoring subtype")
+        print(f"ignoring subtype {message['subtype']}")
         return
     
     if "bot_id" in message:
@@ -29,43 +53,18 @@ def receive_message(message, say, client):
 
     user_id = message["user"]
     message_id = message["ts"]
-    text = message["text"]
     channel_id = message["channel"]
 
-    if "<@U06JQ5LAAUE>" in text:
-        print("mentioned KOI")
-        client.reactions_add(
-            channel=channel_id,
-            timestamp=message_id,
-            name="brain"
-        )
-        response = api.conversation(message)
-        client.reactions_remove(
-            channel=channel_id,
-            timestamp=message_id,
-            name="brain"
-        )
-        client.reactions_add(
-            channel=channel_id,
-            timestamp=message_id,
-            name="bulb"
-        )
-        say(
-            text=response,
-            thread_ts=message_id
-        )
-        return
-
     if channel_id not in allowed_channels:
-        print("ignoring disallowed channel")
+        print(f"ignoring disallowed channel {channel_id}")
         return
 
-    if user_id in opted_out_users:
-        print("ignoring disallowed user")
+    user_data = client.users_profile_get(user=user_id).data
+    data_consent_field = user_data["profile"]["fields"].get(data_consent_field_id)
+    if data_consent_field and "🔴" in data_consent_field["value"]:
+        print(f"ignoring opted out user {user_id}")
         return
-    
-    print("acking message")
-    
+            
     client.reactions_add(
         channel=channel_id,
         timestamp=message_id,
@@ -74,6 +73,10 @@ def receive_message(message, say, client):
 
     api.observe_message(message)
 
-    
+
+print(SLACK_APP_TOKEN)
+print(SLACK_BOT_TOKEN)
+print(SLACK_SIGNING_SECRET)
+
 if __name__ == "__main__":
     SocketModeHandler(app, SLACK_APP_TOKEN).start()
