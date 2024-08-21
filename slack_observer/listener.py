@@ -15,6 +15,12 @@ app = App(
 allowed_channels = ["C077AFMMFGX", "C06LAQNLVNK"]
 data_consent_field_id = "Xf0650JBMA1Y"
 
+@app.event("channel_created")
+def handle_channel_created(event, client: WebClient):
+    channel = event["channel"]
+    client.conversations_join(channel=channel["id"])
+    print("joined", channel["name"])
+
 @app.event("app_mention")
 def handle_app_mention(event, say, client):
     message_id = event["ts"]

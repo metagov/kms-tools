@@ -8,7 +8,7 @@ workspace = app.client.team_info().data["team"]
 
 workspace_id = workspace["id"]
 workspace_rid = f"slack.workspace:{workspace_id}"
-make_request(CREATE, OBJECT, rid=workspace_rid, data=workspace, overwrite=False)
+# make_request(CREATE, OBJECT, rid=workspace_rid, data=workspace, overwrite=False)
 print(workspace_rid, workspace["name"])
 
 channel_cursor = None
@@ -18,6 +18,12 @@ while not channels or channel_cursor:
     channels.extend(result["channels"])
     channel_cursor = result.get("response_metadata", {}).get("next_cursor")
     print(f"{len(channels)} channels observed")
+
+
+for channel in channels:    
+    if not channel["is_member"] and not channel["is_archived"]:
+        app.client.conversations_join(channel=channel['id'])
+        print("joined", channel["name"])
 
 channel_rids = []
 for channel in channels:
