@@ -1,0 +1,47 @@
+from koi import *
+
+
+urls = [
+    "https://blog.block.science/objects-as-reference-toward-robust-first-principles-of-digital-organization/",
+    "https://blog.block.science/a-language-for-knowledge-networks/",
+    "https://blog.block.science/knowledge-networks-and-the-politics-of-protocols/",
+    "https://raw.githubusercontent.com/BlockScience/koi-api/main/README.md",
+    "https://raw.githubusercontent.com/BlockScience/koi-api/main/rid_lib/README.md",
+    # "https://docs.google.com/document/d/1EORTXEK0veL73S6zfrbxMOOTkLTl82U1DOBHicGQrK0/edit#heading=h.kgolp0bb5c7q",
+    "https://hackmd.io/@blockscience/S1YXHDzrn",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4561433",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4078259",
+    "https://ellierennie.medium.com/koi-pond-the-creation-of-a-synthetic-deme-999a6f1f3426",
+    "https://medium.com/metagov/introduction-documentation-of-the-telescope-bot-cfd084beba87",
+    "https://ellierennie.medium.com/what-is-a-good-dao-and-how-do-we-know-2efa2943997b",
+    "https://metagov.org/projects/koi-pond/project-details",
+    "https://metagov.org/projects/koi-pond/faq",
+    "https://metagov.org/projects/koi-pond",
+    "https://metagov.org/projects/govbase-dataset",
+    "https://metagov.org/projects/telescope",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4933063#",
+    "https://medium.com/metagov/introducing-govbase-97884b0ddaef",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4570035",
+    # "https://www.youtube.com/watch?v=Gv_qgC3mbSg",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4880709",
+    "https://blog.block.science/data-intermediary-networks-research/",
+    "https://blog.block.science/algorithms-as-policy/",
+    "https://blog.block.science/techno-reflexivity-a-creative-methodology-for-software-developer-un-bias/",
+    "https://kelsiemvn.mirror.xyz/Obs11rquCCp20XB1nUiMTBU7bKWslThbfpF4Hf7n7Rg",
+    # "https://www.overleaf.com/read/qqfptpqtxbhf#a2fb48",
+    "https://blog.block.science/what-constitutes-a-constitution/",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4077358",
+    "https://blog.block.science/an-algorithm-is-a-camera/",
+    "https://blog.block.science/disambiguating-autonomy/",
+    "https://blog.block.science/computer-aided-ethnography-cae-ethnography-using-computational-methods-in-the-field-of-web3/",
+    "https://blog.block.science/computer-aided-governance-in-action-steering-complex-systems-using-the-cag-map/",
+    "https://blog.block.science/mapping-the-computer-aided-governance-process/",
+    "https://blog.block.science/computer-aided-governance-a-revolution-in-automated-decision-support-systems/",
+    # "https://github.com/BlockScience/cag-map",
+    "https://uxdesign.cc/how-design-is-governance-7c8dd466d753",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2763975",
+    # "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4754267",
+]
+
+for n, url in enumerate(urls):
+    make_request(CREATE, OBJECT, rid="web.page:"+url, flush_queue=(n==len(urls)-1))

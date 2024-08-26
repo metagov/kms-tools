@@ -1,4 +1,4 @@
 .env
 __pycache__
-slack/*.json
+*.json
 venv/

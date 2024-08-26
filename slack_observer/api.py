@@ -30,6 +30,8 @@ def observe_message(message):
     team_rid = f"slack.workspace:{team_id}"
     user_rid = f"slack.user:{team_id}/{user_id}"
     
+    prev_user_data = make_request(READ, OBJECT, rid=user_rid)
+    
     make_request(CREATE, OBJECT, rid=message_rid, data={
         "user": user_id,
         "type": message["type"],
@@ -64,3 +66,5 @@ def observe_message(message):
         tag="wrote_messages",
         members=[message_rid]
     )
+    
+    return bool(prev_user_data)

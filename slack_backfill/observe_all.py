@@ -2,13 +2,14 @@ from . import app
 from koi import *
 import json
 from slack_sdk.errors import SlackApiError
+from slack_config import allowed_channels, initial_users
 
 # prev fields ["id", "name", "url", "domain"]
 workspace = app.client.team_info().data["team"]
 
 workspace_id = workspace["id"]
 workspace_rid = f"slack.workspace:{workspace_id}"
-# make_request(CREATE, OBJECT, rid=workspace_rid, data=workspace, overwrite=False)
+make_request(CREATE, OBJECT, rid=workspace_rid, data=workspace)
 print(workspace_rid, workspace["name"])
 
 channel_cursor = None
@@ -29,7 +30,7 @@ channel_rids = []
 for channel in channels:
     # prev fields ["id", "name", "topic", "description"]
 
-    if channel["id"] not in ["C077AFMMFGX", "C06LAQNLVNK"]:
+    if channel["id"] not in allowed_channels:
         continue
 
     if channel["is_member"] is False:
@@ -63,10 +64,10 @@ for channel in channels:
         # prev fields ["user", "type", "ts", "text", "thread_ts"]
         if message.get("subtype"):
             continue
-
-        # if message["user"] != "U01G7NSR78S":
-        #     continue
-
+        
+        if message["user"] not in initial_users:
+            continue
+        
         user_id = message["user"]
         user_rid = f"slack.user:{workspace_id}/{user_id}"
         make_request(CREATE, OBJECT, rid=user_rid)
@@ -77,7 +78,7 @@ for channel in channels:
         if message.get("thread_ts"):
             message_rid += f"/{message['thread_ts']}"
         message_rids.append(message_rid)
-        make_request(CREATE, OBJECT, rid=message_rid, data=message, embed=False)
+        make_request(CREATE, OBJECT, rid=message_rid, data=message, use_dereference=False)
         make_request(CREATE, OBJECT_LINK, rid=user_rid, tag="wrote_messages", members=[message_rid])
     make_request(CREATE, OBJECT_LINK, rid=channel_rid, tag="has_messages", members=message_rids)
 
