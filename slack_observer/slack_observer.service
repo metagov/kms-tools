@@ -1,11 +1,13 @@
 [Unit]
-Description=KOI API Service
+Description=Slack Observer Service
 After=network.target
 
 [Service]
 WorkingDirectory=/home/dev/kms-tools
-ExecStart=/home/dev/koi-api/venv/bin/python -m slack_observer.listener
+ExecStart=/home/dev/kms-tools/venv/bin/python -u -m slack_observer.listener
 User=dev
+StandardOutput=journal
+StandardError=journal
 Restart=always
 
 [Install]
