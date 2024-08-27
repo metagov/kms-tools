@@ -5,6 +5,8 @@ from slack_sdk.errors import SlackApiError
 from slack_config import allowed_channels, initial_users
 
 
+koi_mention_str = "<@U06JQ5LAAUE>"
+
 def observe_workspace():
     # prev fields ["id", "name", "url", "domain"]
     workspace = app.client.team_info().data["team"]
@@ -143,6 +145,10 @@ def observe_message(message, workspace_id, channel_id):
     user_id = message["user"]
     
     if user_id not in initial_users:
+        return
+    
+    if "<@U06JQ5LAAUE>" in message["text"]:
+        print("ignoring KOI mention")
         return
     
     message_rid = f"slack.message:{workspace_id}/{channel_id}/{message_id}"

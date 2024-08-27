@@ -72,6 +72,10 @@ def receive_message(message, client: WebClient):
     if channel_id not in allowed_channels:
         print(f"ignoring disallowed channel {channel_id}")
         return
+    
+    if "<@U06JQ5LAAUE>" in message["text"]:
+        print("ignoring KOI mention")
+        return
 
     user_data = client.users_profile_get(user=user_id).data
     data_consent_field = user_data["profile"]["fields"].get(data_consent_field_id)
