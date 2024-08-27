@@ -23,25 +23,30 @@ def observe_message(message):
     channel_id = message["channel"]
 
     message_rid = f"slack.message:{team_id}/{channel_id}/{message_id}"
-    print(f"observing {message_rid}")
     if thread_id:
         message_rid += f"/{thread_id}"
     channel_rid = f"slack.channel:{team_id}/{channel_id}"
     team_rid = f"slack.workspace:{team_id}"
     user_rid = f"slack.user:{team_id}/{user_id}"
     
+    print(f"observing {message_rid}")
+    
     prev_user_data = make_request(READ, OBJECT, rid=user_rid)
     
-    make_request(CREATE, OBJECT, rid=message_rid, data={
-        "user": user_id,
-        "type": message["type"],
-        "text": text,
-        "user_rid": user_rid,
-        "prefix_embedding": f"Written by {user_rid}:\n"
-    })
+    make_request(CREATE, OBJECT, rid=message_rid, data=message)
     make_request(CREATE, OBJECT, rid=channel_rid)
     make_request(CREATE, OBJECT, rid=team_rid)
     make_request(CREATE, OBJECT, rid=user_rid)
+    
+    if thread_id:
+        parent_message_rid = f"slack.message:{team_id}/{channel_id}/{thread_id}"
+        make_request(
+            CREATE,
+            OBJECT_LINK,
+            rid=parent_message_rid,
+            tag="has_messages",
+            members=[message_rid]
+        )
 
     make_request(
         CREATE, 
