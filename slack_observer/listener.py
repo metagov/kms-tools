@@ -1,5 +1,6 @@
 from config import SLACK_APP_TOKEN, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
 from slack_bolt import App
+from slack_bolt.context.say import Say
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.web import WebClient
 import json
@@ -22,7 +23,7 @@ def handle_channel_created(event, client: WebClient):
     print("joined", channel["name"])
 
 @app.event("app_mention")
-def handle_app_mention(event, say, client):
+def handle_app_mention(event, say: Say, client):
     message_id = event["ts"]
     channel_id = event["channel"]
 
@@ -44,7 +45,8 @@ def handle_app_mention(event, say, client):
     )
     say(
         text=response,
-        thread_ts=message_id
+        thread_ts=message_id,
+        unfurl_links=False
     )
 
 @app.event("message")
@@ -73,7 +75,7 @@ def receive_message(message, client: WebClient):
         print(f"ignoring disallowed channel {channel_id}")
         return
     
-    if "<@U06JQ5LAAUE>" in message["text"]:
+    if ("<@U06JQ5LAAUE>" in message["text"]) or ("<@U06L3QZ75DM>" in message["text"]):
         print("ignoring KOI mention")
         return
 
