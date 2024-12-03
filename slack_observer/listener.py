@@ -25,6 +25,8 @@ def handle_channel_created(event, client: WebClient):
 def handle_app_mention(event, say, client):
     message_id = event["ts"]
     channel_id = event["channel"]
+    
+    print("responding to app mention")
 
     client.reactions_add(
         channel=channel_id,
@@ -65,9 +67,9 @@ def receive_message(message, client: WebClient):
     channel_id = message["channel"]
     team_id = message["team"]
     
-    if user_id != "U01G7NSR78S":
-        print("ignoring not luke")
-        return
+    # if user_id != "U01G7NSR78S":
+    #     print("ignoring not luke")
+    #     return
 
     if channel_id not in allowed_channels:
         print(f"ignoring disallowed channel {channel_id}")
@@ -106,30 +108,65 @@ def receive_message(message, client: WebClient):
         # )
 
         user_exists = api.observe_message(message)
+    else:
+        user_exists = True
     
     workspace_url = "https://metagov.slack.com"
     formatted_timestamp = message_id.replace('.', '')
     message_link = f"{workspace_url}/archives/{channel_id}/p{formatted_timestamp}"
     
-    announcement_link = "https://metagov.slack.com/archives/C036D1Y3LP9/p1724284774163629"
-    video_link = "https://metagov.slack.com/files/U01G7NSR78S/F07JN7PLKCG/screen_recording_2024-08-21_160744.mp4"
-    
-    data_consent_status = data_consent_field['value'] if data_consent_field else "unset"
-    
+    if not data_consent_field:
+        data_consent_status = "Unset"
+    elif "🟢" in data_consent_field["value"]:
+        data_consent_status = "Opt-In"
+    else:
+        data_consent_status = "Opt-Out"
+        
     if not user_exists:
-        text = (
-            "You are receiving this notice because you just posted "
-            f"<{message_link}|a message> in <#{channel_id}>, a channel "
-            "being observed by KOI. Observed messages are added to "
-            "Metagov's knowledge base, for more information see "
-            f"<{announcement_link}|this announcement>.\n\nYour Data Export "
-            f"Consent status is currrently:\n`{data_consent_status}`\n\n"
-            f"This message and future messages will {'not ' if opted_out else ''}"
-            "be observed. If you wish to change this, see "
-            f"<{video_link}|this video>. You will not receive any additional "
-            "messages about this service. If you have any questions, reach "
-            "out in the <#C06DMGNV7E0> channel."
-        )
+        text = f"""~ ~ ~    KOI Data Pond    ~ ~ ~ 
+≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+
+Hello! You've just posted in <#{channel_id}>,
+a channel observed by KOI, our Knowledge
+Organization Infrastructure. 
+
+Your current data sharing status: `{data_consent_status}`
+(Possible statuses: `Opt-In`, `Opt-Out`, `Unset`)
+
+:fishing_pole_and_fish: Take Action Now: Set Your Data Sharing Preference
+
+A) :ocean: Share All (Opt-In): Future + opt-in for past messages
+B) :rowboat: Keep Current (Stay Unset): Future messages only (default)
+C) :beach_with_umbrella: Dip Out (Opt-Out): Don't share any messages
+
+:point_right: Set your preference now: [<https://metagov.slack.com/files/U01G7NSR78S/F07JN7PLKCG/screen_recording_2024-08-21_160744.mp4|Video tutorial link>]
+
+Your choice applies to all KOI-observed channels and takes 
+effect immediately. You can change it anytime.
+
+≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+
+:ocean: Quick Facts:
+• KOI builds a knowledge base from shared messages and other resources, 
+enabling AI assisted support in channels and other possible services
+• Opting out doesn't limit your channel access.
+• Opting in will make your past messages available for collection.
+• Changes to your preference apply to future sharing only.
+• Previously shared data remains in the system unless you contact us to have it removed.
+• KOI is evolving - your feedback and ideas help shape its future development.
+
+:mag: Learn More:
+• About KOI: [<https://metagov.org/projects/koi-pond|KOI Info>] | [<https://metagov.slack.com/archives/C036D1Y3LP9/p1724284774163629|Announcement>]
+• Questions? Ask in #koi-pond
+
+You're in control. Your choices and feedback shape our evolving community knowledge system.
+
+≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+
+Metagov's data policies: [<https://metagov.pubpub.org/pub/data-policy/release/10|Link 1>] | [<https://metagov.pubpub.org/pub/data-policy-ai/release/4|Link 2>]
+
+This is your only notification for this channel.
+Thanks for being part of our community! :fish:"""
         
         client.chat_postMessage(
             channel=user_id,

@@ -157,7 +157,7 @@ def observe_message(message, workspace_id, channel_id):
         
     user_rid = f"slack.user:{workspace_id}/{user_id}"
     make_request(CREATE, OBJECT, rid=user_rid)
-    make_request(CREATE, OBJECT, rid=message_rid, data=message, embed=False)
+    make_request(CREATE, OBJECT, rid=message_rid, data=message)
     # add messages to user
     make_request(CREATE, OBJECT_LINK, rid=user_rid, tag="wrote_messages", members=[message_rid])
     
